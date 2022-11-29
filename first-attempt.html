@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Astronauts</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script>
+      window.addEventListener("load", function() {
+        fetch("https://handlers.education.launchcode.org/static/astronauts.json").then(function(response) {
+          response.json().then(function(json) {
+            document.querySelector("h1").innerHTML += `: ${json.length}`
+            const container = document.getElementById("container");
+            const unsortedAstronauts = json.slice();
+            const astronauts = [];
+
+            // sort astronauts
+            let index;
+            let mostHours = 0;
+            while (unsortedAstronauts.length > 0) {
+            index = 0;
+              for (let i = 0; i < unsortedAstronauts.length; i++) {
+                if (unsortedAstronauts[i].hoursInSpace > mostHours) {
+                  console.log(`Most hours now: ${unsortedAstronauts[i].hoursInSpace}`)
+                  mostHours = unsortedAstronauts[i].hoursInSpace;
+                  index = i;
+                }
+              }
+              astronauts.push(unsortedAstronauts.splice(index, 1));
+              console.log(astronauts);
+            }
+
+            for (let item of astronauts) {
+              container.innerHTML += `
+              <div class="astronaut">
+                <div class="bio">
+                  <h3>${item.firstName} ${item.lastName}</h3>
+                  <ul>
+                    <li>Hours in Space: ${item.hoursInSpace}</li>
+                    <li><span class=${item.active}>Active: ${item.active}</span></li>
+                    <li>Skills: ${item.skills}</li>
+                  </ul>
+                </div>
+                <img src="${item.picture}" class="avatar">
+              </div>
+              `;
+            };
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <script src="script.js"></script>
+    <h1>Astronauts</h1>
+    <div id="container">
+      <!-- List of astronauts will be added here dynamically -->
+    </div>
+  </body>
+</html>
