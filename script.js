@@ -1,38 +1,24 @@
+/**
+ *  author: Nathan Wright
+ *  class: lc_101
+ *  section: sept 2022
+ *  instructor: Carry Jones
+ */
+
 window.addEventListener("load", () => {
 
   async function getAstronauts() {
-    let response = await fetch(
-      "https://handlers.education.launchcode.org/static/astronauts.json"
-    );
-    let data = await response.json();
-    const header = document.getElementById("header");
-    header.innerHTML += `: ${data.length}`
+    let response = await fetch("https://handlers.education.launchcode.org/static/astronauts.json");
+    let jsonArray = await response.json();
+    jsonArray.sort(function (b, a) {return a.hoursInSpace - b.hoursInSpace;});
 
-    let astronauts = [];
+    // add count to page title
+    document.getElementById("header").innerHTML += `: ${jsonArray.length}`;
 
-    while (data.length > 0) {
-      let index = 0;
-      let mostHours = 0;
-
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].hoursInSpace > mostHours) {
-          index = i;
-          mostHours = data[i].hoursInSpace;
-        }
-      }
-
-      astronauts.push(data.splice(index, 1)[0]);
-    }
-
+    
     const contents = document.getElementById("container");
-
-    for (let element of astronauts) {
-      const skillsString = element.skills.join(", ");
-      let isActive = "notActive";
-
-      if (element.active) {
-        isActive = "active";
-      }
+    for (let element of jsonArray) {
+      const isActive = element.active ? "active" : "";
 
       contents.innerHTML += `
             <div class="astronaut">
@@ -41,7 +27,7 @@ window.addEventListener("load", () => {
                     <ul>
                         <li>Hours in space: ${element.hoursInSpace}</li>
                         <li><span class="${isActive}">Active: ${element.active}</span></li>
-                        <li>Skills: ${skillsString}</li>
+                        <li>Skills: ${element.skills.join(", ")}</li>
                     </ul>
                 </div>
                 <img src="${element.picture}" class="avatar">
@@ -50,9 +36,10 @@ window.addEventListener("load", () => {
     }
   }
 
-    getAstronauts();
+  getAstronauts();
 
-//   document.getElementById("header").addEventListener("click", function () {
-//     getAstronauts();
-//   });
+  //  click on header to initiate api request
+  //   document.getElementById("header").addEventListener("click", function () {
+  //     getAstronauts();
+  //   });
 });
